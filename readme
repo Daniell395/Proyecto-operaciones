@@ -1,0 +1,27 @@
+Integrantes
+
+Didier Delgado
+Daniel Lemos - 20171578028
+Jeym cañon
+
+Metodologia
+
+python
+- numpy
+- Matplotlib
+- Shapely
+
+links y ayudas
+
+https://www.ingenieriaindustrialonline.com/investigacion-de-operaciones/metodo-grafico-de-la-programacion-lineal-mediante-el-uso-de-python/
+
+https://github.com/aleSalas1995/Proyecto-Investigacion-de-Operaciones.git
+
+
+TO DO
+
+- Didier: diseño de interfaces graficas y 2 fases
+
+- Daniel: Back de toda la funcionalidad en grafica 
+
+- Jeym: ajustar el metodo de 2 fases del link de github para mostrar por tramos
