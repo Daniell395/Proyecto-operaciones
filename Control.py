@@ -1,9 +1,9 @@
 import copy
-from MetodoSimplex import*
+from Simplex import*
 tabla=[[]]
 varSeleccion=0
 arregloColumnas=[]
-arregloFilas=["Z"]
+arregloFilas=["Xb\Z"]
 arregloZ=[]
 arreglo_Z2=[]
 
@@ -26,11 +26,11 @@ class Z:
         for i in range(len(self.u)):
             global arregloZ
             if self.min == True:
-                z=Z_Aux(self.u[i]*-1,"x"+str(i+1))
+                z=Z_Aux(self.u[i]*-1,"X"+str(i+1))
             else:
-                z=Z_Aux(self.u[i],"x"+str(i+1))
+                z=Z_Aux(self.u[i],"X"+str(i+1))
             arregloZ.append(z)
-        sol=Z_Aux(0,"SOL")
+        sol=Z_Aux(0,"CX")
         arregloZ.append(sol)
 
 
@@ -70,11 +70,11 @@ class Z:
      
             if self.restricciones[i][len(self.restricciones[i])-1]!= "<=":
                 for j in range(len(self.restricciones[i])-2): 
-                    if self.buscarArreglo("x"+str(j+1)) != -1: 
+                    if self.buscarArreglo("X"+str(j+1)) != -1: 
                         numero = self.verificarMinX(self.restricciones[i][j])
 
                 numero = self.verificarMinX(self.restricciones[i][len(self.restricciones[i])-2])
-                x=self.buscarArreglo("SOL")
+                x=self.buscarArreglo("CX")
                  
             self.cambiarSignos()
 
@@ -125,7 +125,7 @@ class Matriz:
     def variablesX(self):
         global varSeleccion
         for i in range (0,varSeleccion):
-            arregloColumnas.append("x"+str(i+1))
+            arregloColumnas.append("X"+str(i+1))
 
 class Restricciones:
     def __init__(self, arreglo,min):
@@ -151,12 +151,12 @@ class Restricciones:
                 tabla[i+1][posicion]=-1
             else: tabla[i+1][posicion]=1
 
-        arregloColumnas.append("SOL")
-        arregloColumnas.append("XB")
+        arregloColumnas.append("Bi")
+        arregloColumnas.append("Cx")
 
     def MayorIgual(self):
         arregloColumnas.append("R"+str(self.varR))
-        arregloColumnas.append("S"+str(self.varS))
+        arregloColumnas.append("H"+str(self.varS))
         arregloFilas.append("R"+str(self.varR))
         z=Z_Aux(0,"S"+str(self.varS))
         global arregloZ
@@ -170,8 +170,8 @@ class Restricciones:
             
 
     def MenorIgual(self):
-        arregloColumnas.append("S"+str(self.varS))
-        arregloFilas.append("S"+str(self.varS))
+        arregloColumnas.append("H"+str(self.varS))
+        arregloFilas.append("H"+str(self.varS))
         self.varS+=1
 
     def Igual(self):
@@ -236,8 +236,8 @@ class Controlador:
         Returns:
             None
         """
-        print("\n * R = Var Artificial    \n * S = Var Holgura       \n * X = Var Decision      \n\n")
-        self.archivo.write("\n * R = Var Artificial    \n * S = Var Holgura       \n * X = Var Decision      \n\n")
+
+
         dosFases = False
         for i in range(len(self.arregloEntrada)):
             if self.arregloEntrada[i][-1] != "<=":
@@ -267,31 +267,27 @@ class Controlador:
 
             else:
                 #Fase1#
-                print("\n** Metodo dos fases **\n")
-                print("\n-> Fase #1\n")
+                print("\n ==================================== PRIMERA FASE ===================================\n")
                 nuevoN = self.generarNuevoN()
                 nuevaTabla = self.generarTablaF1(nuevoN)
 
                 MS=MetodoSimplex(nuevaTabla,arregloFilas,arregloColumnas,self.esMinimizar,self.archivo)
                 MatrizF1 = MS.start_MetodoSimplex_Max()
-
-                print("\nFase 1 Lista\n")
                 
                 #Fase2#
-                print("\n->Fase #2\n")
+                print("\n===================================== SEGUNDA FASE ======================================\n")
                 self.generarTablaF2(MatrizF1)
                 nuevaTabla = self.eliminarVariablesArtificiales()    
                 nuevoArregloCol = self.actualizarArregloCol()
                 tablaCeros = self.hacerCeros(nuevaTabla,arregloFilas, nuevoArregloCol)            
                 MS=MetodoSimplex(nuevaTabla,arregloFilas,nuevoArregloCol,self.esMinimizar,self.archivo)
                 MatrizF1 = MS.start_MetodoSimplex_Max()
-                print("Fase 2 Lista")
     
     def imprimirResultadoDual(self, matrizDual):
         arregloDual =  []
         for i in range(len(matrizDual[0])):
 
-            if matrizDual[0][i].letra !=  "SOL":
+            if matrizDual[0][i].letra !=  "CX":
                 if "S" in matrizDual[0][i].letra:
                     arregloDual.append((round(matrizDual[0][i].NUM*-1,2)))
         return arregloDual

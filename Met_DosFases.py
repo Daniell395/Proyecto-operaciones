@@ -1,5 +1,5 @@
 from tkinter import *
-from Principal import *
+from Main import *
 import sys
 import os
 
@@ -8,7 +8,7 @@ class Data:
     def __init__(self, master):
 
         self.root = root
-        self.root.title("Metodo por 2 fases")
+        self.root.title("MÉTODO DOS FASES")
         
         frame = Frame(master)
         frame.pack(side=TOP)
@@ -16,7 +16,7 @@ class Data:
         minMax = ["max","min"]
         self.opcion = StringVar()
         self.opcion.set(minMax[0])
-        self.titulo = Label(frame,text="Escoja Máximo o Mínimo:")
+        self.titulo = Label(frame,text="Seleccione tipo de optimización (Max-Min):", font=("TkDefaultFont", 12, "bold"))
         self.titulo.grid(row=0,sticky=W)
         self.menuOpciones = OptionMenu(frame,self.opcion,*minMax)
         self.menuOpciones.grid(row=0,column=1)
@@ -24,13 +24,13 @@ class Data:
         self.space = Label(frame,text=" ")
         self.space.grid(row=2,sticky=W)
 
-        self.varLab = Label(frame,text="Variables")
+        self.varLab = Label(frame,text="Variables (Max. 10)",fg="red",font=("TkDefaultFont", 10, "bold"))
         self.varLab.grid(row=3,sticky=W)
         self.variables = Spinbox(frame,from_=2, to=10,state="readonly",width=10)
         self.variables.grid(row=4,sticky=W)
 
 
-        self.resLab = Label(frame,text="Restricciones")
+        self.resLab = Label(frame,text="Restricciones (Max. 10)", fg="red",font=("TkDefaultFont", 10, "bold"))
         self.resLab.grid(row=5,sticky=W)
         self.restricciones = Spinbox(frame,from_=2, to=10,state="readonly",width=10)
         self.restricciones.grid(row=6,sticky=W)
@@ -39,32 +39,10 @@ class Data:
         lin = Label(frame,text="")
         lin.grid(row=7,sticky=W)
 
-        self.button = Button(frame,text="Aceptar", relief = RAISED,command = lambda:self.funcionObjetivo(master,self.opcion,self.variables,self.restricciones,self.button))
+        self.button = Button(frame,text="Ingresar valores FO", bg="black", fg="white", activebackground="red", relief = RAISED,command = lambda:self.funcionObjetivo(master,self.opcion,self.variables,self.restricciones,self.button))
         self.button.grid(row=8,sticky=W)
-        self.root.configure(bg='gray')
+        self.root.configure(bg='black')
 
-        self.reiniciarBoton = Button(frame, text="Reiniciar", relief=RAISED, command=lambda:self.reiniciar_programa)
-        self.reiniciarBoton.grid(row=9, sticky=W)
-
-
-        def reiniciar_programa(self):
-        # Destruir los widgets actuales
-            self.button.destroy()
-            self.reiniciarBoton.destroy()
-            self.titulo.destroy()
-            self.menuOpciones.destroy()
-            self.space.destroy()
-            self.varLab.destroy()
-            self.variables.destroy()
-            self.resLab.destroy()
-            self.restricciones.destroy()
-            self.opcion.set("max")
-            self.variables.delete(0, END)
-            self.variables.insert(0, "2")
-            self.restricciones.delete(0, END)
-            self.restricciones.insert(0, "2")
-
-            self.__init__(self.master)
 
 
     def funcionObjetivo(self, master, opcion, variables, restricciones, boton):
@@ -113,7 +91,7 @@ class Data:
         lin = Label(frame2, text="")
         lin.grid(row=9, sticky=W)
 
-        self.buttonx = Button(frame2, text="Aceptar", relief=RAISED,
+        self.buttonx = Button(frame2, text="Ingresar inecuaciones", bg="black", fg="white", activebackground="red",font=("TkDefaultFont", 10, "bold"), relief=RAISED,
                               command=lambda: self.restriccionesLlenar(master, self.opcion, vas, res, funcEspacios, self.buttonx))
         self.buttonx.grid(row=10, sticky=W)
 
@@ -182,7 +160,7 @@ class Data:
         lin = Label(frame4,text="")
         lin.grid(row=9,sticky=W)
 
-        self.button2 = Button(frame4,text="Aceptar", relief = RAISED,command = lambda:self.pintar(master,self.opcion,variables,restricciones,funcEspacios,self.button2,frame4))
+        self.button2 = Button(frame4,text="Calcular",bg="black", fg="white",font=("TkDefaultFont", 10, "bold"), activebackground="red", relief = RAISED,command = lambda:self.pintar(master,self.opcion,variables,restricciones,funcEspacios,self.button2,frame4))
         self.button2.grid(row=10,sticky=W)
 
 
@@ -226,12 +204,12 @@ class Data:
         resultado = self.estandarizarResultado(resultado)
 
         frame5 = Frame(master)
-        frame5.pack(side=BOTTOM)
-        ulabel = Label(frame5)
+        frame5.pack(side=TOP)
+        ulabel = Label(frame5, font=("TkDefaultFont", 10, "bold"))
         ulabel.grid(row=0)
 
         main(resultado)
-        archivo = open("solucionDosFases", "r")
+        archivo = open("Registro", "r")
         lineas = archivo.readlines()  # Fix: Define 'lineas' by reading lines from the file
         if lineas:
             ulabel.config(text=lineas[-1])
@@ -267,7 +245,7 @@ class Data:
     '''
 
 root = Tk()
-root.geometry("1200x600")
+root.geometry("1200x400")
 root.resizable(True, True)
 matriz = Data(root)      
 root.mainloop()

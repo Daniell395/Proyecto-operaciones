@@ -73,9 +73,10 @@ class Solucion:
         self.lista.append("U")
         self.lista2.append(str(round(tabla[0][len(tabla[0])-2].NUM,2)))
         for i in range(1, len(arregloFilas)):
-            self.lista.append(arregloFilas[i])
+            
             
             self.lista2.append(tabla[i][len(tabla[i])-2])
+            self.lista.append(arregloFilas[i])
 
         self.colocar_Variables(arregloCol)
         self.imprimirVar(archivo)
@@ -96,7 +97,7 @@ class Solucion:
     '''            
     def imprimirVar(self,archivo):
 
-        aux="->Respuesta Final: U = "+ str(self.lista2[0])+" ("+ str(self.lista[1]) +": "+ str(round(self.lista2[1],2))
+        aux="VALOR ÓPTIMO: [Z] = "+ str(self.lista2[0])+"\t Valores de variables resultantes: ("+ str(self.lista[1]) +": "+ str(round(self.lista2[1],2))
         for i in range(2,len(self.lista)):
             aux+=","+str(self.lista[i]) +": "+ str(round(self.lista2[i],2))
         print (aux+" )")

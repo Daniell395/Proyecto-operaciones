@@ -20,7 +20,7 @@ def resolver_problema_programacion_lineal(funcion_objetivo, inecuaciones, objeti
 
     valores_z = evaluar_en_funcion_objetivo(intersecciones_validas, funcion_objetivo)
 
-    if objetivo == 'max':
+    if objetivo == 'F Max':
         indice_optimo = valores_z.index(max(valores_z))
     else:
         indice_optimo = valores_z.index(min(valores_z))
@@ -261,9 +261,9 @@ class InterfazGrafica:
         # Actualizar el tipo de optimización
         objetivo = self.tipo_var.get()
         if objetivo == "Maximizar":
-            self.objetivo = "max"
+            self.objetivo = "F MAX"
         elif objetivo == "Minimizar":
-            self.objetivo = "min"
+            self.objetivo = "F MIN"
 
 
 

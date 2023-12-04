@@ -1,7 +1,7 @@
 tabla=[[]]
 arregloFilas=[]
 arregloColumnas=[]
-from Imprimir import *
+from Vista import *
 
 class MetodoSimplex:
     def __init__(self, tablaAux, arregloFilasAux, arregloColumnasAux, esMin, fichero):
@@ -83,8 +83,8 @@ class MetodoSimplex:
 
     def verificarDegenerada(self,degenerada):
         if self.flagDg is True:
-            print("\n\n-> Solucion Degenerada hubo empate en coef minimo en coef minimo en el estado:"+str(degenerada)+"\n")
-            self.archivo.write("\n\n-> Solucion Degenerada hubo empate en coef minimo en el estado:"+str(degenerada)+"\n")
+            print("\n\n DEGENERACIÓN:"+str(degenerada)+"\n")
+            self.archivo.write("\n\n DEGENERACIÓN:"+str(degenerada)+"\n")
 
     def optimoMax(self):
         global tabla
@@ -114,16 +114,15 @@ class MetodoSimplex:
         columnaPivot = col
         self.realizarDivision(columnaPivot)
         filaPivot = self.encontrarFilaPivote()
-        print("- Numero Pivot: " + str(round(tabla[filaPivot][columnaPivot], 2)) + ",VB entrante: " + arregloColumnas[columnaPivot] + ",VB saliente: " + arregloFilas[filaPivot])
-        self.archivo.write("- Numero Pivot: " + str(round(tabla[filaPivot][columnaPivot], 2)) + ",VB entrante: " + arregloColumnas[columnaPivot] + ",VB saliente: " + arregloFilas[filaPivot] + "\n")
+        print("Pivote para trabajar: " + str(round(tabla[filaPivot][columnaPivot], 2)) + "\nEntra: " + arregloColumnas[columnaPivot] + "\nSale: " + arregloFilas[filaPivot])
+        self.archivo.write("Pivote para trabajar: " + str(round(tabla[filaPivot][columnaPivot], 2)) + "\nEntra: " + arregloColumnas[columnaPivot] + "\nSale: " + arregloFilas[filaPivot] + "\n")
         self.convertir_Fila_Pivote(filaPivot, columnaPivot)
         self.modificar_Filas(filaPivot, columnaPivot)
         self.modificar_FilaZ(filaPivot, columnaPivot)
         auxFila = arregloFilas[filaPivot]
         arregloFilas[filaPivot] = arregloColumnas[columnaPivot]
         impresion.imprime_Matriz()
-        self.archivo.write("\n\n** Solucion adicional debido a que la variable no basica: " + auxFila + " tenia un valor de 0 en el estado Final **\n")
-        print("\n\n** Solucion adicional debido a que la variable no basica: " + auxFila + " tenia un valor de 0 en el estado Final**")
+       
 
     def start_MetodoSimplex_Max(self):
 
@@ -148,14 +147,11 @@ class MetodoSimplex:
         while True:
             if self.optimoMax() is True and self.esMin is False or self.optimoMax() is True and self.esMin is True :
                 self.verificarDegenerada(degenerada)
-                print("\n- Estado Final")
-                self.archivo.write("\n- Estado Final\n")
+
                 s.mostrarSolucion(tabla,arregloFilas,arregloColumnas,self.archivo, self.esMin)
 
                 if multiplesSol.localizar_VB(tabla,arregloFilas,arregloColumnas)!= -1: 
                     #existen multiples soluciones
-                    print("\n->Existen multiples soluciones\n")
-                    self.archivo.write("\n->Existen multiples soluciones\n")
                     self.solucionAdicional(multiplesSol.localizar_VB(tabla,arregloFilas,arregloColumnas))
                     
                     s_Extra.mostrarSolucion(tabla,arregloFilas,arregloColumnas,self.archivo, self.esMin) 
@@ -167,10 +163,10 @@ class MetodoSimplex:
             filaPivot=self.encontrarFilaPivote()
 
             if(filaPivot == -1):
-                print("\n- Estado: "+ str(estados))
-                self.archivo.write("\n- Estado: "+ str(estados)+"\n")
-                print("** Solucion sin delimitar, debido a que en la columnaPivote: "+ str(columnaPivot)+ " cada uno de los valores es negativo o 0 **")
-                self.archivo.write("** Solucion sin delimitar, debido a que en la columnaPivote:"+ str(columnaPivot)+ " cada uno de los valores es negativo o 0 **\n")
+                print("\n ITERACIÓN "+ str(estados))
+                self.archivo.write("\n ITERACIÓN "+ str(estados)+"\n")
+                print("#####  Se detiene el proceso debido a que cada uno de los valores de la columna pivote es menor o igual a cero ###### \n")
+                self.archivo.write("#####  Se detiene el proceso debido a que cada uno de los valores de la columna pivote es menor o igual a cero ###### \n")
                 s.mostrarSolucion(tabla,arregloFilas,arregloColumnas,self.archivo,self.esMin)
                 return tabla#break
             
@@ -180,13 +176,13 @@ class MetodoSimplex:
                
                 degenerada=estados+1
 
-            self.archivo.write("\n- Estado: "+ str(estados)+"\n") # se escribe en el archivo de salida
+            self.archivo.write("\n ITERACIÓN "+ str(estados)+"\n") # se escribe en el archivo de salida
 
-            print("\n- Estado: "+ str(estados))
+            print("\n Info interación: "+ str(estados))
             estados+=1
-            self.archivo.write("- Numero Pivot: "+ str(round(tabla[filaPivot][columnaPivot],2))+ ",VB entrante: "+ arregloColumnas[columnaPivot]+ ",VB saliente: "+ arregloFilas[filaPivot]+"\n")
+            self.archivo.write("Pivote para trabajar: "+ str(round(tabla[filaPivot][columnaPivot],2))+ "\nEntra: "+ arregloColumnas[columnaPivot]+ "\nSale: "+ arregloFilas[filaPivot]+"\n")
             conv= str(round(tabla[filaPivot][columnaPivot],2))
-            print("- Numero Pivot: "+ str(Fraction(conv))+ ",VB entrante: "+ arregloColumnas[columnaPivot]+ ",VB saliente: "+ arregloFilas[filaPivot])
+            print("Pivote para trabajar: "+ str(Fraction(conv))+ "\nEntra: "+ arregloColumnas[columnaPivot]+ "\nSale: "+ arregloFilas[filaPivot])
             arregloFilas[filaPivot]=arregloColumnas[columnaPivot]
             
             self.convertir_Fila_Pivote(filaPivot,columnaPivot) # Metodo gauss jordan
@@ -280,7 +276,7 @@ class Imprime:
         aux="\n\n\n\t"
         aux2="\t"
         for i in arregloColumnas:
-            aux+=i+"\t\t"
+            aux+=i+"\t"
             aux2+=""
         aux2+=""
         print (aux+"\n"+aux2)
@@ -293,7 +289,7 @@ class Imprime:
         for x in range (len(tabla[0])):
             var2=round(tabla[0][x].NUM,2)
             convert=Fraction(var2).limit_denominator()
-            aux+=str(convert)+"\t\t"
+            aux+=str(convert)+"\t"
         print (aux)
         self.archivo.write(aux+"\n")
 
@@ -308,6 +304,6 @@ class Imprime:
               for j in range (len(tabla[i])):
                   var=round(tabla[i][j],2)
                   convert=Fraction(var).limit_denominator()
-                  aux+=str(convert)+"\t\t"
+                  aux+=str(convert)+"\t"
               self.archivo.write(aux+"\n")
               print(aux)
