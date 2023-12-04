@@ -1,24 +1,26 @@
-import argparse
-import sys
-import re 
 
+import re # Expresiones regualres
+
+#Variables globales
 global tipoDeOptimizacion;
 global numeroVariablesDecision;
 global numeroRestricciones;
 global variableU
 
-from Controlador import*
-from Imprimir import*
+#  Import de clases
+from Control import*
+from Vista import*
 
 coeficientesFuncionObjetivo = []
 restricciones = []
 
-def main(elementosEntrada):
+#Funcion Main
+def main(elementosEntrada):#elementosEntrada):
 
     global coeficientesFuncionObjetivo
     global restricciones
 
-    archivoSalida = "solucionDosFases"
+    archivoSalida = "Registro"
     asignarElementos(elementosEntrada)
 
     global numeroVariablesDecision
@@ -31,36 +33,22 @@ def main(elementosEntrada):
 def fname(arg):
     pass
 
+
+#Funcion que se encarga de llamar a las distintas funciones para hacer validaciones del archivo de entrada
 def asignarElementos(elementosEntrada):
-    """
-    Asigna los elementos de entrada y realiza las validaciones correspondientes.
-
-    Args:
-        elementosEntrada (list): Lista que contiene los elementos de entrada.
-
-    Returns:
-        None
-    """
     validarTipoOptimizacion(elementosEntrada[0])
     validarNumeroArgumentos(elementosEntrada[1])
     validarCoeficientesFuncionObjetivo(elementosEntrada[2])
     validarRestricciones(elementosEntrada)
 
-
+#Valida si el tipo de optimizacion es min o max
+#Retorna a la funcion anterior (asignarElementos)
 def validarTipoOptimizacion(optimizacion):
-    """
-    Valida el tipo de optimización ingresado.
-
-    Parámetros:
-    optimizacion (str): El tipo de optimización a validar.
-
-    Retorna:
-    None
-    """
     global tipoDeOptimizacion
     if optimizacion == "min" or optimizacion == "max":
         if optimizacion == "min":
             tipoDeOptimizacion = True
+            #print("El tipo de optimizacion es: " + tipoDeOptimizacion)
             return
         else:
             tipoDeOptimizacion = False
@@ -70,56 +58,42 @@ def validarTipoOptimizacion(optimizacion):
         print("Esperaba : min o max")
         exit(0)
 
-
+#Valida si la cantidad de argumentos ingresados son unicamento dos (decision,argumentos)
+#Retorna a la funcion anterior(asignarElementos)
 def validarNumeroArgumentos(linea2Archivo):
-    """
-    Valida el número de argumentos en la línea 2 del archivo.
-
-    Parameters:
-    linea2Archivo (str): La línea 2 del archivo que contiene los argumentos.
-
-    Returns:
-    None
-
-    Raises:
-    ValueError: Si alguno de los valores ingresados no es un entero.
-
-    """
     global numeroRestricciones
     global numeroVariablesDecision
+    #Separa por , o espacio en blanco
     numeroArgumentos = len(re.split(",| ",linea2Archivo))
     if numeroArgumentos == 2:
         numeroVariablesDecision,numeroRestricciones = linea2Archivo.split(",")
+        #Valida si lo ingresado son numeros enteros
         try:
             val = float(eval(numeroVariablesDecision))
             val2 = float(eval(numeroRestricciones))
         except ValueError:
             print("ERROR: Alguno de los valores ingresados no es un entero")
             exit(0)
+        #print("El numero de numeroVariablesDecision es : " + numeroVariablesDecision)
+        #print("El numero de numeroRestricciones es : " + numeroRestricciones)
         return
     else:
-        print("ERROR: exceso de argumentos en la linea 2 del archivo")
+        print("ERROR: Se pasa de argumentos en la linea 2 del archivo")
         print("Usted ingreso : " + str(numeroArgumentos))
         print("Se esperan 2 argumentos : Variables de Decision, Restricciones")
         exit(0)
 
-
+#Valida si los coeficientes ingresados son igual a la cantidad de variables de Decision
+#Retorn a la funcion anterior (asignarElementos)
 def validarCoeficientesFuncionObjetivo(linea3Archivo):
-    """
-    Valida los coeficientes de la función objetivo.
-
-    Parámetros:
-    - linea3Archivo: cadena de texto que contiene los coeficientes separados por comas.
-
-    Retorna:
-    None
-    """
     global numeroVariablesDecision
     global coeficientesFuncionObjetivo
     numeroArgumentos = len(re.split(",",linea3Archivo))
     args = re.split(",",linea3Archivo)
     i = 0
+    #Si el numero de argumentos es igual al numero de variables de decision
     if(int(numeroArgumentos) == int(numeroVariablesDecision)):
+        #For para recorrer cada uno de los argumentos, validar si son enteros y guardarlos en la lista de coeficientesFuncionObjetivo
         for i in range(int(numeroVariablesDecision)):
             try:
                 val = float(args[i])
@@ -134,27 +108,22 @@ def validarCoeficientesFuncionObjetivo(linea3Archivo):
         exit(0)
     return
 
+#Valida si las restricciones cumplen con lo siguiente:
+## Validacion 1: El numero de restricciones es igual a la cantidad que se ingresado
+##Validacion 2: Cada restriccion tiene unicamente numeros enteros y termina con <=,>= o =
+##Validacion 3: La restriccion tenga el mismo numero de coeficientes que el numero de variables de descision + 1
 def validarRestricciones(listaDeElementos):
-    """
-    Valida las restricciones ingresadas en la lista de elementos.
-
-    Args:
-        listaDeElementos (list): Lista de elementos que contiene las restricciones.
-
-    Returns:
-        None
-    """
     global numeroRestricciones
     global restricciones
     global numeroVariablesDecision
-
+    #Validacion 1
     if (len(listaDeElementos)-3) == int(numeroRestricciones):
-
+        #Apartir de 3 estan las restricciones
         for k in range(3,len(listaDeElementos)):
-
+            #Agarra cada restriccion y separa los elementos por cada ,
             listaAux = listaDeElementos[k]
             args = re.split(",",listaAux)
-
+            #Validacion 3
             if (len(args)-1) != (int(numeroVariablesDecision) + 1):
                 print("ERROR: Alguna restriccion se encuentra incomplete o el numero de variables de decision ingresada es incorrecto")
                 exit(0)
@@ -165,7 +134,7 @@ def validarRestricciones(listaDeElementos):
                 except ValueError:
                     print("ERROR: Alguno de los valores ingresados no es un entero")
                     exit(0)
-
+            #Validacion 2
             if(args[-1] == "=" or args[-1] == "<=" or args[-1] == ">="):
                 restricciones.append(args)
             else:
