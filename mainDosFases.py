@@ -3,13 +3,16 @@ from Principal import *
 import sys
 import os
 
-class matrizDatos:
+class Data:
 
     def __init__(self, master):
 
+        self.root = root
+        self.root.title("Metodo por 2 fases")
+        
         frame = Frame(master)
         frame.pack(side=TOP)
-        #-----------------------------------------------------------------------------
+        
         minMax = ["max","min"]
         self.opcion = StringVar()
         self.opcion.set(minMax[0])
@@ -17,27 +20,28 @@ class matrizDatos:
         self.titulo.grid(row=0,sticky=W)
         self.menuOpciones = OptionMenu(frame,self.opcion,*minMax)
         self.menuOpciones.grid(row=0,column=1)
-        #-----------------------------------------------------------------------------
+
         self.space = Label(frame,text=" ")
         self.space.grid(row=2,sticky=W)
 
         self.varLab = Label(frame,text="Variables")
         self.varLab.grid(row=3,sticky=W)
-        self.variables = Spinbox(frame,from_=2, to=7,state="readonly",width=10)
+        self.variables = Spinbox(frame,from_=2, to=10,state="readonly",width=10)
         self.variables.grid(row=4,sticky=W)
-        #-----------------------------------------------------------------------------
+
 
         self.resLab = Label(frame,text="Restricciones")
         self.resLab.grid(row=5,sticky=W)
-        self.restricciones = Spinbox(frame,from_=2, to=7,state="readonly",width=10)
+        self.restricciones = Spinbox(frame,from_=2, to=10,state="readonly",width=10)
         self.restricciones.grid(row=6,sticky=W)
-        #-----------------------------------------------------------------------------
+
 
         lin = Label(frame,text="")
         lin.grid(row=7,sticky=W)
 
         self.button = Button(frame,text="Aceptar", relief = RAISED,command = lambda:self.funcionObjetivo(master,self.opcion,self.variables,self.restricciones,self.button))
         self.button.grid(row=8,sticky=W)
+        self.root.configure(bg='gray')
 
         self.reiniciarBoton = Button(frame, text="Reiniciar", relief=RAISED, command=lambda:self.reiniciar_programa)
         self.reiniciarBoton.grid(row=9, sticky=W)
@@ -60,58 +64,80 @@ class matrizDatos:
             self.restricciones.delete(0, END)
             self.restricciones.insert(0, "2")
 
-        # Llamar a la función __init__ para recrear la interfaz
             self.__init__(self.master)
 
-    '''
-    Funcion que crea la funcion objetivo, la matriz y el boton de aceptar para la matriz    
-    '''
 
-    def funcionObjetivo(self,master,opcion,variables,restricciones,boton):
+    def funcionObjetivo(self, master, opcion, variables, restricciones, boton):
+        """
+        Función que crea la interfaz gráfica para ingresar la función objetivo.
+
+        Args:
+            master (Tk): Ventana principal de la aplicación.
+            opcion (StringVar): Variable que almacena la opción seleccionada.
+            variables (StringVar): Variable que almacena el número de variables.
+            restricciones (StringVar): Variable que almacena el número de restricciones.
+            boton (Button): Botón que se destruirá al llamar a esta función.
+
+        Returns:
+            None
+        """
         boton.destroy()
         vas = int(variables.get())
         res = int(restricciones.get())
         frame2 = Frame(master)
         frame2.pack(side=TOP)
         columCount = 0
-        func = Label(frame2,text=opcion.get()+" = ")
-        func.grid(row=0,column=columCount)
-        columCount+=1
+        func = Label(frame2, text=opcion.get() + " = ")
+        func.grid(row=0, column=columCount)
+        columCount += 1
 
         funcEspacios = []
         funcEspacios.append([])
-        for i in range(0,vas):
+        for i in range(0, vas):
 
-            cuadrito = Entry(frame2,width=7,relief=RAISED)
+            cuadrito = Entry(frame2, width=7, relief=RAISED)
             funcEspacios[0].append(cuadrito)
-            cuadrito.grid(row=0,column=columCount)
-            columCount+=1
+            cuadrito.grid(row=0, column=columCount)
+            columCount += 1
 
-            x = "x"+str(i+1)
-            xpos = Label(frame2,text=x)
-            xpos.grid(row=0,column=columCount)
-            columCount+=1
+            x = "x" + str(i + 1)
+            xpos = Label(frame2, text=x)
+            xpos.grid(row=0, column=columCount)
+            columCount += 1
 
-            if i+1!=vas:
-                suma = Label(frame2,text=" + ")
-                suma.grid(row=0,column=columCount)
-                columCount+=1
+            if i + 1 != vas:
+                suma = Label(frame2, text=" + ")
+                suma.grid(row=0, column=columCount)
+                columCount += 1
 
+        lin = Label(frame2, text="")
+        lin.grid(row=9, sticky=W)
 
-        lin = Label(frame2,text="")
-        lin.grid(row=9,sticky=W)
-
-        self.buttonx = Button(frame2,text="Aceptar", relief = RAISED,command = lambda:self.restriccionesLlenar(master,self.opcion,vas,res,funcEspacios,self.buttonx))
-        self.buttonx.grid(row=10,sticky=W)
+        self.buttonx = Button(frame2, text="Aceptar", relief=RAISED,
+                              command=lambda: self.restriccionesLlenar(master, self.opcion, vas, res, funcEspacios, self.buttonx))
+        self.buttonx.grid(row=10, sticky=W)
 
         # self.button2 = Button(frame2,text="Aceptar", relief = RAISED,command = lambda:self.matriciar(master,self.opcion,vas,res,funcEspacios,self.button2))
         # self.button2.grid(row=10,sticky=W)
-        #self.hola(master,opcion,variables,restricciones)
+        # self.hola(master,opcion,variables,restricciones)
 
-    '''
-    Funcion que crea la matriz y el boton de aceptar para la matriz
-    '''
+
     def restriccionesLlenar(self,master,opcion,variables,restricciones,funcEspacios,buttonx):
+
+        """
+        Llena el formulario de restricciones en la interfaz gráfica.
+
+        Args:
+            master (Tk): La ventana principal de la aplicación.
+            opcion (int): La opción seleccionada.
+            variables (int): El número de variables.
+            restricciones (int): El número de restricciones.
+            funcEspacios (list): La lista de espacios de función.
+            buttonx (Button): El botón a destruir.
+
+        Returns:
+            None
+        """
         buttonx.destroy()
         for p in funcEspacios:
             for q in p:
@@ -156,35 +182,45 @@ class matrizDatos:
         lin = Label(frame4,text="")
         lin.grid(row=9,sticky=W)
 
-        self.button2 = Button(frame4,text="Aceptar", relief = RAISED,command = lambda:self.printear(master,self.opcion,variables,restricciones,funcEspacios,self.button2,frame4))
+        self.button2 = Button(frame4,text="Aceptar", relief = RAISED,command = lambda:self.pintar(master,self.opcion,variables,restricciones,funcEspacios,self.button2,frame4))
         self.button2.grid(row=10,sticky=W)
 
-    '''
-    Funcion que crea la impresion de los simbolos, la funcion objetivo y la matriz con sus variables
-    '''
 
+    def pintar(self, master, opcion, variables, restricciones, funcEspacios, button2, frame4):
+        """
+        Pinta la interfaz gráfica y realiza operaciones basadas en los parámetros proporcionados.
 
-    def printear(self,master,opcion,variables,restricciones,funcEspacios,button2,frame4):
+        Args:
+            master: El objeto maestro de la interfaz gráfica.
+            opcion: La opción seleccionada.
+            variables: El número de variables.
+            restricciones: El número de restricciones.
+            funcEspacios: La lista de espacios de función.
+            button2: El botón a destruir.
+            frame4: El marco de la interfaz gráfica.
 
+        Returns:
+            None
+        """
         button2.destroy()
         simbolos = []
-        for s in range(1,len(funcEspacios)):           
+        for s in range(1, len(funcEspacios)):
             simbolos.append(funcEspacios[s][-1].get())
 
         resultado = []
-        resultado.append(opcion.get())        
-        resultado.append(str(variables)+","+str(restricciones)) 
+        resultado.append(opcion.get())
+        resultado.append(str(variables) + "," + str(restricciones))
 
         linea = []
         for x in funcEspacios[0]:
             linea.append(x.get())
-        resultado.append(linea)        
+        resultado.append(linea)
 
-        for x in range(1,restricciones+1):
+        for x in range(1, restricciones + 1):
             linea = []
-            for y in range(0,len(funcEspacios[x])-1):
+            for y in range(0, len(funcEspacios[x]) - 1):
                 linea.append(funcEspacios[x][y].get())
-            linea.append(simbolos[x-1])
+            linea.append(simbolos[x - 1])
             resultado.append(linea)
 
         resultado = self.estandarizarResultado(resultado)
@@ -202,21 +238,25 @@ class matrizDatos:
         else:
             ulabel.config(text="No tiene solucion")
 
-    '''
-    Funcion que estandariza el resultado para que sea leido por el metodo main
-    '''
+    def estandarizarResultado(self, resultadoAux):
+        """
+        Estandariza el resultadoAux en forma de arreglo de strings.
 
-    def estandarizarResultado(self,resultadoAux):
+        Args:
+            resultadoAux (list): El resultadoAux a estandarizar.
 
+        Returns:
+            list: El resultado estandarizado como arreglo de strings.
+        """
         arregloString = []
 
         arregloString.append(resultadoAux[0])
         arregloString.append(resultadoAux[1])
         for i in range(2, len(resultadoAux)):
-            x=""
+            x = ""
             for j in range(len(resultadoAux[i])):
-                if j < len(resultadoAux[i])-1:
-                    x = x + str(resultadoAux[i][j]) + ','
+                if j < len(resultadoAux[i]) - 1:
+                    x = x + str(resultadoAux[i][j]) + ","
                 else:
                     x = x + str(resultadoAux[i][j])
             arregloString.append(x)
@@ -229,39 +269,5 @@ class matrizDatos:
 root = Tk()
 root.geometry("1200x600")
 root.resizable(True, True)
-matriz = matrizDatos(root)      
+matriz = Data(root)      
 root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-# lab1 = Label(root, text = "ONE" , bg = "red", fg = "white")
-# lab1.pack(fill=BOTH,expand=1)
-# lab2 = Label(root, text = "TWO" , bg = "white", fg = "red")
-# lab2.pack(fill=BOTH,expand=1)
-
-# topFrame = Frame(root)
-# topFrame.pack()
-
-# buttonFrame = Frame(root)
-# buttonFrame.pack(side=BOTTOM)
-#
-# button1 = Button(topFrame,text="click me", fg="red")
-# button2 = Button(topFrame,text="click me", fg="blue")
-# button3 = Button(topFrame,text="click me", fg="green")
-# button4 = Button(buttonFrame,text="click me", fg="purple")
-#
-# button1.pack()
-# button2.pack()
-# button3.pack()
-# button4.pack()
-
-# theLabel = Label(root,text="is too easy")
-# theLabel.pack()

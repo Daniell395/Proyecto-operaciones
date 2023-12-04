@@ -8,8 +8,6 @@ arregloZ=[]
 arreglo_Z2=[]
 
 class Z_Aux:
-
-
     def __init__(self,NUM,letra):
       
         self.NUM=NUM
@@ -22,13 +20,6 @@ class Z:
         self.restricciones=arreglo
         self.u= u
 
-    '''
-    Funcion en la cual se crean los objetos
-    correspondientes a las variables basicas
-    con sus respectivos atributos del numero y
-    letra ya sea x1 x2 etc
-    Ademas se agrega la solucion identificada mediante SOL
-    '''    
     def crearZ(self):
         global tabla
         self.conversionNulos()
@@ -43,6 +34,9 @@ class Z:
         arregloZ.append(sol)
 
 
+        
+
+    def buscarArreglo(self, identificador):
         """
         Busca un elemento en el arregloZ y devuelve su índice si se encuentra, de lo contrario devuelve -1.
 
@@ -52,9 +46,6 @@ class Z:
         Retorna:
         - El índice del elemento si se encuentra, de lo contrario -1.
         """
-
-    def buscarArreglo(self, identificador):
-
         global arregloZ
         for x in range(len(arregloZ)):
             if arregloZ[x].letra == identificador:
@@ -67,12 +58,13 @@ class Z:
             return NUM*-1
         else: return NUM
        
-    '''
-    Funcion la cual va agregando va recorriendo restriccion por restriccion
-    para realizar la suma correspondiente de acuerdo al despeje
-    de las variables artificiales con los valores de la funcion objetivo
-    '''
+   
     def agregarRestricciones(self):
+        '''
+        Funcion la cual va agregando va recorriendo restriccion por restriccion
+        para realizar la suma correspondiente de acuerdo al despeje
+        de las variables artificiales con los valores de la funcion objetivo
+        '''
         global arregloZ
         for i in range (len(self.restricciones)):
      
@@ -101,12 +93,6 @@ class Z:
                 return x
         return -1         
 
-    ''' 
-    Funcion que se utliza para 
-    la creacion de objetos pertenecientes a las 
-    variables de holgura en donde el valor del numero 
-    corresponde a 0 0
-    '''
     def conversionNulos(self):
         for x in range(len(arregloColumnas)):
             z=Z_Aux(0,arregloColumnas[x])
@@ -122,15 +108,7 @@ class Matriz:
 
     def get_Matriz(self): 
         return self.matriz
-
-    '''
-    Funcion en la cual se crea la matriz a utilizar
-    contando las variables artificiales, holgura y basicas
-    en caso de tenerlas
-    Ademas se agregan dos columnas extra para colocar
-    la solucion y el resultado de la division para
-    la seleccion del fila pivot
-    '''
+    
     def cantidad_filas(self):
         if(len(self.matriz) != 0):
            global varSeleccion, tabla
@@ -155,10 +133,7 @@ class Restricciones:
         self.varR=1
         self.varS=1
         self.min=min
-    '''
-    Funcion en la cual se colococan dentro de la tabla general a utilizar
-    un 1 0 -1 a las variables correspondientes a las artificiales
-    '''   
+
     def colocar_Restricciones(self):
         global varSeleccion
         posicion = varSeleccion-1
@@ -179,12 +154,6 @@ class Restricciones:
         arregloColumnas.append("SOL")
         arregloColumnas.append("XB")
 
-    '''
-    Funcion en la cual se agrega al arreglo que muestra las filas
-    y las columnas una R representando variable artificial
-    y una S en caso de ser una variable de holgura
-    Se le adiciona el nuemero para poder diferenciarlas
-    '''   
     def MayorIgual(self):
         arregloColumnas.append("R"+str(self.varR))
         arregloColumnas.append("S"+str(self.varS))
@@ -199,22 +168,12 @@ class Restricciones:
         switcher = {True: 1}
         return switcher.get(argument, -1)
             
-    '''
-    Funcion la cual agrega una S asemejando a una variable
-    holgura tanto al arreglo de filas como el arreglo 
-    de columnas , es cuando se recibe un signo <=
-    '''
+
     def MenorIgual(self):
         arregloColumnas.append("S"+str(self.varS))
         arregloFilas.append("S"+str(self.varS))
         self.varS+=1
 
-    '''
-    Funcion en la que se agrega una R asimilando 
-    una variable artificial, se agrega cuando 
-    en la restriccion el signo es un =, se anade 
-    al arreglo de filas y columnas
-    '''
     def Igual(self):
         arregloColumnas.append("R"+str(self.varR))
         arregloFilas.append("R"+str(self.varR))
@@ -224,7 +183,7 @@ class Restricciones:
         switcher = {">=": self.MayorIgual,"<=": self.MenorIgual, "=": self.Igual }
         switcher [signo]()
 
-
+class Controlador:
 
     '''
     Clase Controlador que se encarga de controlar la implementación del método simplex.
@@ -249,13 +208,13 @@ class Restricciones:
     - eliminarVariablesArtificiales(self): Método que elimina las columnas con variables artificiales de la tabla.
     - actualizarArregloCol(self): Método que actualiza el arreglo de columnas eliminando las variables artificiales.
     '''
-   
-class Controlador:
-    '''
-    Metodo main en donde se llaman a las funciones para
-    la implementacion del metodo simplex
-    '''
+    
     def __init__(self,minimo,U,restricciones,vars,file,esDual):
+
+        '''
+        Metodo main en donde se llaman a las funciones para
+        la implementacion del metodo simplex
+        '''
         global varSeleccion
         self.esDual=esDual
         self.archivo=file
@@ -265,11 +224,18 @@ class Controlador:
         self.arregloEntrada=restricciones
 
 
-    '''
-    Funcion en la cual se controla la creacion del areglo con objetos
-    pertenecientes a la fila U, ademas se crea la tabla de forma estandarizada
-    '''
-    def inicioControlador(self):    
+    def inicioControlador(self):
+        """
+        Método que realiza el control inicial del programa.
+        Imprime información sobre las variables y realiza los cálculos necesarios
+        para ejecutar el método simplex.
+
+        Args:
+            self: Referencia al objeto actual.
+
+        Returns:
+            None
+        """
         print("\n * R = Var Artificial    \n * S = Var Holgura       \n * X = Var Decision      \n\n")
         self.archivo.write("\n * R = Var Artificial    \n * S = Var Holgura       \n * X = Var Decision      \n\n")
         dosFases = False
@@ -356,9 +322,7 @@ class Controlador:
             nuevaTabla[0][x].NUM=lista2[x]
             x+=1
         return nuevaTabla
-    ''' 
-    Funcion encargada de colocar el nuevo U para realizar la primera fase
-    '''
+
     def generarTablaF1(self,nuevoN):
         global tabla
         tablaAux = copy.deepcopy(tabla)
@@ -375,11 +339,7 @@ class Controlador:
             tablaAux[0][i].NUM = nuevoZ[i]
 
         return tablaAux
-
-    '''
-    Crea una fila de 0 y -1(si es artificial), para realizar 
-    la suma de columnas y poder calcular el U de la primera Fase
-    '''
+    
     def generarNuevoN(self):       
         arreglo = []
         for i in range(len(tabla[0])):
@@ -389,19 +349,12 @@ class Controlador:
                 arreglo.append(0)
         return arreglo
 
-    '''
-    Coloca el U original en la matriz, con las filas (restricciones)
-    de la fase #1
-    '''
     def generarTablaF2(self, MatrizF1):
         global tabla
         for i in range(len(tabla)):
             if i > 0:
                 tabla[i] = MatrizF1[i]
 
-    '''
-    Elmina las columnas con variables artificiales
-    '''
     def eliminarVariablesArtificiales(self):
         global tabla 
 
@@ -418,10 +371,6 @@ class Controlador:
 
         return tablaF2
 
-    '''
-    Elimina las R de el arreglo que contiene los identificadores 
-    de cada columna
-    '''
     def actualizarArregloCol(self):
         global arregloColumnas
         nuevoArregloCol = []
