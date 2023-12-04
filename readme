@@ -4,24 +4,44 @@ Didier Delgado
 Daniel Lemos - 20171578028
 Jeym cañon
 
-Metodologia
+--- ¿COMO DESCARGARLO?
 
-python
-- numpy
-- Matplotlib
-- Shapely
+el codigo se encuentra en: 
 
-links y ayudas
+https://github.com/Daniell395/Proyecto-operaciones
 
-https://www.ingenieriaindustrialonline.com/investigacion-de-operaciones/metodo-grafico-de-la-programacion-lineal-mediante-el-uso-de-python/
+en el repositorio se encuentra TODOS los archivos de codigo python (.py)
 
-https://github.com/aleSalas1995/Proyecto-Investigacion-de-Operaciones.git
+EL .exe se descarga dando click en el boton verde <>code y descargar como .zip
+
+al descargar el .zip se baja todo el proyecto, solo es extraer el .exe, no es necesario sacar lo demás
 
 
-TO DO
+--- ¿COMO FUNCIONA?
 
-- Didier: diseño de interfaces graficas y 2 fases
+al iniciar el programa se inicializa una ventana con 2 botones
 
-- Daniel: Back de toda la funcionalidad en grafica 
+grafico y dos fases
 
-- Jeym: ajustar el metodo de 2 fases del link de github para mostrar por tramos
+no hay boton de devolverse, por lo cual toca 
+
+*Metodo grafico 
+
+funciona inicialmente seleccionando el tipo de optimizacion
+
+si o si antes de empezar a añadir inecuaciones, hay que agregar la Funcion objetivo
+
+darle "GUARDAR"
+
+añadir los coeficientes de las variables y seleccionar el tipo de inecuacion
+
+se puede usar el boton de guardar varias veces y actualiza la grafica que se genera
+
+
+*dos fases
+
+el codigo funciona por selector, se pone la cantidad de variables a trabajar (max 10)
+
+se añade las variables y se selecciona el tipo de restriccion
+
+se genera el codigo por consola y por interfaz
