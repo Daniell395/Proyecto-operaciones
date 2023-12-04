@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
 import numpy as np
-import sympy as sp
+from sympy import symbols, Eq, solve
+from fractions import Fraction
 
 
 def resolver_problema_programacion_lineal(funcion_objetivo, inecuaciones, objetivo):
@@ -20,7 +21,7 @@ def resolver_problema_programacion_lineal(funcion_objetivo, inecuaciones, objeti
 
     valores_z = evaluar_en_funcion_objetivo(intersecciones_validas, funcion_objetivo)
 
-    if objetivo == 'F Max':
+    if objetivo == 'max':
         indice_optimo = valores_z.index(max(valores_z))
     else:
         indice_optimo = valores_z.index(min(valores_z))
@@ -42,11 +43,11 @@ def calcular_intersecciones(inecuaciones):
     # Intersecciones entre inecuaciones
     for i in range(len(inecuaciones) - 1):
         for j in range(i + 1, len(inecuaciones)):
-            x, y = sp.symbols('x y')
-            ecuacion1 = sp.Eq(inecuaciones[i]['coeficientes'][0] * x + inecuaciones[i]['coeficientes'][1] * y, inecuaciones[i]['coeficientes'][2])
-            ecuacion2 = sp.Eq(inecuaciones[j]['coeficientes'][0] * x + inecuaciones[j]['coeficientes'][1] * y, inecuaciones[j]['coeficientes'][2])
+            x, y = symbols('x y')
+            ecuacion1 = Eq(inecuaciones[i]['coeficientes'][0] * x + inecuaciones[i]['coeficientes'][1] * y, inecuaciones[i]['coeficientes'][2])
+            ecuacion2 = Eq(inecuaciones[j]['coeficientes'][0] * x + inecuaciones[j]['coeficientes'][1] * y, inecuaciones[j]['coeficientes'][2])
 
-            solucion = sp.solve((ecuacion1, ecuacion2), (x, y))
+            solucion = solve((ecuacion1, ecuacion2), (x, y))
             if solucion:
                 intersecciones.append({'x': solucion[x], 'y': solucion[y]})
 
@@ -157,6 +158,9 @@ class InterfazGrafica:
 
         self.guardado_label = tk.Label(root, text="", fg="green")
         self.guardado_label.pack()
+                # Botón Limpiar
+        self.limpiar_button = tk.Button(root, text="Limpiar", fg="red", command=self.limpiar_interfaz)
+        self.limpiar_button.pack()
 
 
         # Lista para almacenar las inecuaciones ingresadas
@@ -229,17 +233,12 @@ class InterfazGrafica:
         coef_b = self.coef_b_entry.get()
         coef_c = self.coef_c_entry.get()
         tipo_inecuacion = self.inecuacion_var.get()
-    
-        # Verificar si algún valor está ausente
-        if not coef_a or not coef_b or not coef_c or not tipo_inecuacion:
-            messagebox.showwarning("Error", "Faltan valores por agregar.")
-            return
 
-        # Convertir los coeficientes a números
+        # Convertir coeficientes a números fraccionarios
         try:
-            coef_a = float(coef_a)
-            coef_b = float(coef_b)
-            coef_c = float(coef_c)
+            coef_a = Fraction(coef_a)
+            coef_b = Fraction(coef_b)
+            coef_c = Fraction(coef_c)
         except ValueError:
             messagebox.showwarning("Error", "Los coeficientes deben ser números válidos.")
             return
@@ -257,21 +256,48 @@ class InterfazGrafica:
         inecuacion_str = f"{coef_a}x + {coef_b}y {tipo_inecuacion} {coef_c}"
         self.in_listbox.insert(tk.END, inecuacion_str)
 
+        # Limpiar los campos de entrada
+        self.coef_a_entry.delete(0, tk.END)
+        self.coef_b_entry.delete(0, tk.END)
+        self.coef_c_entry.delete(0, tk.END)
+
+    def limpiar_interfaz(self):
+        # Limpiar todos los valores ingresados
+        self.tipo_var.set("")  # Limpiar tipo de optimización
+        self.coef_x_entry.delete(0, tk.END)
+        self.coef_y_entry.delete(0, tk.END)
+        self.guardado_label.config(text="", font=("TkDefaultFont", 12))  # Restablecer mensaje de guardado
+        self.inecuaciones = []  # Limpiar lista de inecuaciones
+        self.in_listbox.delete(0, tk.END)  # Limpiar Listbox
+        self.coef_a_entry.delete(0, tk.END)
+        self.coef_b_entry.delete(0, tk.END)
+        self.coef_c_entry.delete(0, tk.END)
+        self.coef_x_entry.delete(0, tk.END)
+        self.coef_y_entry.delete(0, tk.END)       
+
     def actualizar_tipo_optimizacion(self):
         # Actualizar el tipo de optimización
         objetivo = self.tipo_var.get()
         if objetivo == "Maximizar":
-            self.objetivo = "F MAX"
+            self.objetivo = "max"
         elif objetivo == "Minimizar":
-            self.objetivo = "F MIN"
+            self.objetivo = "min"
 
 
 
     def agregar_coeficientes_funcion_objetivo(self):
         # Obtener coeficientes de la función objetivo
-        coef_x = float(self.coef_x_entry.get())
-        coef_y = float(self.coef_y_entry.get())
-        
+        coef_x = self.coef_x_entry.get()
+        coef_y = self.coef_y_entry.get()
+
+        # Convertir coeficientes a números fraccionarios
+        try:
+            coef_x = Fraction(coef_x)
+            coef_y = Fraction(coef_y)
+        except ValueError:
+            messagebox.showwarning("Error", "Los coeficientes deben ser números válidos.")
+            return
+
         # Agregar los coeficientes a un diccionario
         self.coeficientes_funcion_objetivo = {'coeficientes': [coef_x, coef_y]}
 
